@@ -16,7 +16,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "NODE_ENV=production node server.js", 
+    "dev": "react-scripts --openssl-legacy-provider start",  
     "build": "react-scripts build",
     "postinstall": "npm run build",
     "build-legacy": "NODE_OPTIONS=--openssl-legacy-provider npm run build"
