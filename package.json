@@ -3,30 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@openapitools/openapi-generator-cli": "^2.14.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.3.3",
+    "cross-env": "^7.0.3",
     "express": "^4.21.1",
-    "react": "^18.3.1",
+    "react": "^18.3.0",
     "react-bootstrap": "^2.10.5",
-    "react-dom": "^18.3.1",
+    "react-dom": "^18.3.0",
     "react-router-dom": "^6.27.0",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "NODE_ENV=production node server.js", 
-    "dev": "react-scripts --openssl-legacy-provider start",  
-    "build": "react-scripts build",
-    "postinstall": "npm run build",
-    "build-legacy": "NODE_OPTIONS=--openssl-legacy-provider npm run build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "generate-api-client": "npx @openapitools/openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g javascript -o ./src/generated-api-client",
+    "start": "npm run generate-api-client && cross-env NODE_ENV=production node server.js",
+    "dev": "npm run generate-api-client && cross-env NODE_ENV=development react-scripts start",
+    "build": "npm run generate-api-client && react-scripts build",
+    "build-legacy": "npm run generate-api-client && cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build"
   },
   "browserslist": {
     "production": [
@@ -41,6 +37,6 @@
     ]
   },
   "engines": {
-  "node": "16.x"
+    "node": "16.x"
   }
 }
