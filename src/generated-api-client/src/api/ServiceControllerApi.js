@@ -238,7 +238,7 @@ export default class ServiceControllerApi {
       let accepts = ['*/*'];
       let returnType = PatchServiceResponseDto;
       return this.apiClient.callApi(
-        '/service/patch', 'PUT',
+        '/service/patch', 'PATCH',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

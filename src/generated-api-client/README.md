@@ -135,7 +135,7 @@ Class | Method | HTTP request | Description
 *OpenApiDefinition.ServiceControllerApi* | [**getAllServices**](docs/ServiceControllerApi.md#getAllServices) | **GET** /service/all | 
 *OpenApiDefinition.ServiceControllerApi* | [**getServiceByID**](docs/ServiceControllerApi.md#getServiceByID) | **GET** /service/by-id/{serviceId} | 
 *OpenApiDefinition.ServiceControllerApi* | [**getServiceByName**](docs/ServiceControllerApi.md#getServiceByName) | **GET** /service/by-name/{name} | 
-*OpenApiDefinition.ServiceControllerApi* | [**patchService**](docs/ServiceControllerApi.md#patchService) | **PUT** /service/patch | 
+*OpenApiDefinition.ServiceControllerApi* | [**patchService**](docs/ServiceControllerApi.md#patchService) | **PATCH** /service/patch | 
 *OpenApiDefinition.UserControllerApi* | [**callDelete**](docs/UserControllerApi.md#callDelete) | **DELETE** /user/delete | 
 *OpenApiDefinition.UserControllerApi* | [**changePassword**](docs/UserControllerApi.md#changePassword) | **PUT** /user/change-password | 
 *OpenApiDefinition.UserControllerApi* | [**getById**](docs/UserControllerApi.md#getById) | **GET** /user/get_by_id | 

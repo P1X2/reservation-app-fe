@@ -8,7 +8,7 @@ Method | HTTP request | Description
 [**getAllServices**](ServiceControllerApi.md#getAllServices) | **GET** /service/all | 
 [**getServiceByID**](ServiceControllerApi.md#getServiceByID) | **GET** /service/by-id/{serviceId} | 
 [**getServiceByName**](ServiceControllerApi.md#getServiceByName) | **GET** /service/by-name/{name} | 
-[**patchService**](ServiceControllerApi.md#patchService) | **PUT** /service/patch | 
+[**patchService**](ServiceControllerApi.md#patchService) | **PATCH** /service/patch | 
 
 
 

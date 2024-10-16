@@ -12,15 +12,12 @@ function LoginForm({ onClose }) {
     event.preventDefault();
     console.log('Login attempt with:', username, password);
 
-    // Set userId to 1 (hardcoded for this example)
     const userId = 1;
 
-    // Log the API base URL
     console.log('API base URL:', process.env.REACT_APP_API_BASE_URL);
 
     const userApi = new UserControllerApi();
 
-    // Fetch user by ID and log user data
     userApi.getById(userId, (error, data, response) => {
       if (error) {
         setError('Error fetching user data: ' + error.message);
