@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Spinner, Alert, Modal } from 'react-bootstrap';
+import { Table, Button, Spinner, Alert, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import AppointmentControllerApi from '../generated-api-client/src/api/AppointmentControllerApi';
+import ReviewControllerApi from '../generated-api-client/src/api/ReviewControllerApi';
 
 function MyAppointments() {
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showModal, setShowModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showReviewModal, setShowReviewModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [reviewContent, setReviewContent] = useState('');
+    const [rating, setRating] = useState(5);
     const navigate = useNavigate();
 
-    const clientId = 1;  // @TODO Mock until jwt implemented
+    const clientId = 1; // Zamokowany klient ID na 1
 
     useEffect(() => {
         fetchAppointments();
@@ -36,7 +40,7 @@ function MyAppointments() {
 
     const handleDeleteAppointment = (appointment) => {
         setSelectedAppointment(appointment);
-        setShowModal(true);
+        setShowDeleteModal(true);
     };
 
     const confirmDelete = () => {
@@ -46,7 +50,29 @@ function MyAppointments() {
                 setError('Błąd podczas usuwania wizyty: ' + error.message);
             } else {
                 setAppointments(appointments.filter(app => app.appointmentId !== selectedAppointment.appointmentId));
-                setShowModal(false);
+                setShowDeleteModal(false);
+            }
+        });
+    };
+
+    const handleAddReview = (appointment) => {
+        setSelectedAppointment(appointment);
+        setShowReviewModal(true);
+    };
+
+    const submitReview = () => {
+        const api = new ReviewControllerApi();
+        const reviewCommand = {
+            reviewContent: reviewContent,
+            rating: parseInt(rating)
+        };
+
+        api.addNew(selectedAppointment.appointmentId, reviewCommand, (error) => {
+            if (error) {
+                setError('Błąd podczas dodawania recenzji: ' + error.message);
+            } else {
+                alert('Recenzja została dodana!');
+                setShowReviewModal(false);
             }
         });
     };
@@ -82,6 +108,15 @@ function MyAppointments() {
                                     >
                                         X
                                     </Button>
+                                    {new Date(appointment.appointmentDate) < new Date() && (
+                                        <Button 
+                                            variant="secondary" 
+                                            className="ms-2"
+                                            onClick={() => handleAddReview(appointment)}
+                                        >
+                                            Dodaj komentarz
+                                        </Button>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -92,7 +127,8 @@ function MyAppointments() {
                 <p>Brak wizyt do wyświetlenia</p>
             )}
 
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
+            {/* Modal potwierdzenia usunięcia */}
+            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Potwierdzenie usunięcia</Modal.Title>
                 </Modal.Header>
@@ -100,11 +136,53 @@ function MyAppointments() {
                     Czy na pewno chcesz odwołać wizytę na usługę: {selectedAppointment?.service.name}?
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                    <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
                         Anuluj
                     </Button>
                     <Button variant="danger" onClick={confirmDelete}>
                         Odwołaj wizytę
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Modal dodawania recenzji */}
+            <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Dodaj komentarz do wizyty</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Twoja recenzja</Form.Label>
+                            <Form.Control 
+                                as="textarea" 
+                                rows={3} 
+                                value={reviewContent}
+                                onChange={(e) => setReviewContent(e.target.value)} 
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Ocena</Form.Label>
+                            <Form.Control 
+                                as="select"
+                                value={rating}
+                                onChange={(e) => setRating(e.target.value)}
+                            >
+                                <option value={1}>1 - Bardzo źle</option>
+                                <option value={2}>2 - Źle</option>
+                                <option value={3}>3 - Średnio</option>
+                                <option value={4}>4 - Dobrze</option>
+                                <option value={5}>5 - Bardzo dobrze</option>
+                            </Form.Control>
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowReviewModal(false)}>
+                        Anuluj
+                    </Button>
+                    <Button variant="primary" onClick={submitReview}>
+                        Dodaj recenzję
                     </Button>
                 </Modal.Footer>
             </Modal>
