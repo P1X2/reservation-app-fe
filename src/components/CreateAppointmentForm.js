@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Container, Row, Col, Modal, ListGroup } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 import AppointmentControllerApi from '../generated-api-client/src/api/AppointmentControllerApi';
 import ServiceControllerApi from '../generated-api-client/src/api/ServiceControllerApi';
 
 function CreateAppointmentForm() {
+    const location = useLocation();
+    const preselectedService = location.state?.selectedService || null;
+
     const [clientId, setClientId] = useState('');
     const [employeeId, setEmployeeId] = useState('');
-    const [serviceId, setServiceId] = useState(null);  
+    const [serviceId, setServiceId] = useState(preselectedService?.serviceId || null);  
     const [appointmentDate, setAppointmentDate] = useState('');
     const [services, setServices] = useState([]);
-    const [selectedServiceName, setSelectedServiceName] = useState(''); 
+    const [selectedServiceName, setSelectedServiceName] = useState(preselectedService?.name || ''); 
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        fetchServices();
+        if (!preselectedService) {
+            fetchServices();
+        }
     }, []);
 
     const fetchServices = () => {
@@ -42,7 +48,7 @@ function CreateAppointmentForm() {
         const command = {
             clientId: parseInt(clientId, 10),
             employeeId: parseInt(employeeId, 10),
-            serviceId: parseInt(serviceId, 10), // Ensure serviceId is converted to an integer
+            serviceId: parseInt(serviceId, 10),
             appointmentDate: new Date(appointmentDate)
         };
 
@@ -61,10 +67,10 @@ function CreateAppointmentForm() {
         <Container className="mt-5">
             <Row>
                 <Col md={6} className="offset-md-3">
-                    <h2>Create Appointment</h2>
+                    <h2>Utwórz wizytę</h2>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Client ID</Form.Label>
+                            <Form.Label>ID klienta</Form.Label>
                             <Form.Control
                                 type="number"
                                 value={clientId}
@@ -73,26 +79,26 @@ function CreateAppointmentForm() {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Employee ID</Form.Label>
+                            <Form.Label>ID pracownika</Form.Label>
                             <Form.Control
-                                type="number"  //@TODO Probably should be automatically assigned.
+                                type="number"
                                 value={employeeId}
                                 onChange={(e) => setEmployeeId(e.target.value)}
                                 required
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Service ID</Form.Label>
+                            <Form.Label>Usługa</Form.Label>
                             <Form.Control
                                 type="text"
                                 value={selectedServiceName} 
-                                placeholder="Click to select a service"
+                                placeholder="Kliknij, aby wybrać usługę"
                                 onClick={() => setShowModal(true)}
                                 readOnly
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Appointment Date</Form.Label>
+                            <Form.Label>Data wizyty</Form.Label>
                             <Form.Control
                                 type="datetime-local"
                                 value={appointmentDate}
@@ -102,18 +108,18 @@ function CreateAppointmentForm() {
                         </Form.Group>
                         {error && <p className="text-danger">{error}</p>}
                         <Button variant="primary" type="submit">
-                            Create Appointment
+                            Utwórz wizytę
                         </Button>
                     </Form>
 
                     <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
                         <Modal.Header closeButton>
-                            <Modal.Title>Select a Service</Modal.Title>
+                            <Modal.Title>Wybierz usługę</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <ListGroup>
                                 {services.map(service => (
-                                    <ListGroup.Item key={service.id} action onClick={() => handleServiceSelect(service)}>
+                                    <ListGroup.Item key={service.serviceId} action onClick={() => handleServiceSelect(service)}>
                                         {service.name} - {service.description}
                                     </ListGroup.Item>
                                 ))}

@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import './App.css';
 import HomePage from './components/home-page/HomePage';
 import CreateAppointmentForm from './components/CreateAppointmentForm';
+import ServiceList from './components/ServiceList';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/home" element={<HomePage />} /> 
         <Route path="*" element={<Navigate to="/home" replace />} />
         <Route path="/appointment" element={<CreateAppointmentForm />} />
+        <Route path="/services" element={<ServiceList />} />
       </Routes>
     </Router>
   );
