@@ -5,6 +5,7 @@ import './App.css';
 import HomePage from './components/home-page/HomePage';
 import CreateAppointmentForm from './components/CreateAppointmentForm';
 import ServiceList from './components/ServiceList';
+import MyAppointments from './components/MyAppointments';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="*" element={<Navigate to="/home" replace />} />
         <Route path="/appointment" element={<CreateAppointmentForm />} />
         <Route path="/services" element={<ServiceList />} />
+        <Route path="/my-appointments" element={<MyAppointments />} />
       </Routes>
     </Router>
   );
