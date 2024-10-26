@@ -10,7 +10,6 @@ Method | HTTP request | Description
 [**patchUser**](UserControllerApi.md#patchUser) | **PATCH** /user/patch-user-data | 
 [**patchUserRole**](UserControllerApi.md#patchUserRole) | **PATCH** /user/change-role | 
 [**patchUserStatus**](UserControllerApi.md#patchUserStatus) | **PATCH** /user/change-status | 
-[**registerUser**](UserControllerApi.md#registerUser) | **POST** /user/register | 
 
 
 
@@ -270,47 +269,4 @@ No authorization required
 
 - **Content-Type**: application/json
 - **Accept**: Not defined
-
-
-## registerUser
-
-> RegisterUserResponseDto registerUser(registerUserCommand)
-
-
-
-### Example
-
-```javascript
-import OpenApiDefinition from 'open_api_definition';
-
-let apiInstance = new OpenApiDefinition.UserControllerApi();
-let registerUserCommand = new OpenApiDefinition.RegisterUserCommand(); // RegisterUserCommand | 
-apiInstance.registerUser(registerUserCommand, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
-});
-```
-
-### Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **registerUserCommand** | [**RegisterUserCommand**](RegisterUserCommand.md)|  | 
-
-### Return type
-
-[**RegisterUserResponseDto**](RegisterUserResponseDto.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: */*
 

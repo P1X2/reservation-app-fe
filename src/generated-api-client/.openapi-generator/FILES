@@ -5,12 +5,14 @@ README.md
 docs/AddReviewCommand.md
 docs/AddServiceCommand.md
 docs/AppointmentControllerApi.md
+docs/AuthControllerApi.md
 docs/CreateAppointmentCommand.md
 docs/CreateAppointmentResponseDto.md
 docs/GetAppointmentDto.md
 docs/GetReviewDto.md
 docs/GetServiceDto.md
 docs/GetUserDto.md
+docs/LoginUserCommand.md
 docs/PageMetadata.md
 docs/PagedModelGetAppointmentDto.md
 docs/PagedModelGetReviewDto.md
@@ -28,14 +30,17 @@ docs/ReviewControllerApi.md
 docs/ServiceControllerApi.md
 docs/SetUserPasswordCommand.md
 docs/UserControllerApi.md
+docs/UserControlleraApi.md
 git_push.sh
 mocha.opts
 package.json
 src/ApiClient.js
 src/api/AppointmentControllerApi.js
+src/api/AuthControllerApi.js
 src/api/ReviewControllerApi.js
 src/api/ServiceControllerApi.js
 src/api/UserControllerApi.js
+src/api/UserControlleraApi.js
 src/index.js
 src/model/AddReviewCommand.js
 src/model/AddServiceCommand.js
@@ -45,6 +50,7 @@ src/model/GetAppointmentDto.js
 src/model/GetReviewDto.js
 src/model/GetServiceDto.js
 src/model/GetUserDto.js
+src/model/LoginUserCommand.js
 src/model/PageMetadata.js
 src/model/PagedModelGetAppointmentDto.js
 src/model/PagedModelGetReviewDto.js
@@ -59,3 +65,6 @@ src/model/PatchUserStatusCommand.js
 src/model/RegisterUserCommand.js
 src/model/RegisterUserResponseDto.js
 src/model/SetUserPasswordCommand.js
+test/api/AuthControllerApi.spec.js
+test/api/UserControlleraApi.spec.js
+test/model/LoginUserCommand.spec.js

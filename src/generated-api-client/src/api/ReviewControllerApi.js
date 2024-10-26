@@ -134,7 +134,7 @@ export default class ReviewControllerApi {
      * @param {Object} opts Optional parameters
      * @param {Number} [page = 0)] 
      * @param {Number} [pageSize = 2)] 
-     * @param {String} [sortBy = 'createdAt')] 
+     * @param {String} [sortBy = 'created_at')] 
      * @param {String} [sortDir = 'desc')] 
      * @param {module:api/ReviewControllerApi~getByServiceCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link module:model/PagedModelGetReviewDto}
@@ -185,7 +185,7 @@ export default class ReviewControllerApi {
      * @param {Object} opts Optional parameters
      * @param {Number} [page = 0)] 
      * @param {Number} [pageSize = 2)] 
-     * @param {String} [sortBy = 'createdAt')] 
+     * @param {String} [sortBy = 'created_at')] 
      * @param {String} [sortDir = 'desc')] 
      * @param {module:api/ReviewControllerApi~getsByUserCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link module:model/PagedModelGetReviewDto}

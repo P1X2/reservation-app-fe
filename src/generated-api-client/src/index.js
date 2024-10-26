@@ -21,6 +21,7 @@ import GetAppointmentDto from './model/GetAppointmentDto';
 import GetReviewDto from './model/GetReviewDto';
 import GetServiceDto from './model/GetServiceDto';
 import GetUserDto from './model/GetUserDto';
+import LoginUserCommand from './model/LoginUserCommand';
 import PageMetadata from './model/PageMetadata';
 import PagedModelGetAppointmentDto from './model/PagedModelGetAppointmentDto';
 import PagedModelGetReviewDto from './model/PagedModelGetReviewDto';
@@ -36,9 +37,11 @@ import RegisterUserCommand from './model/RegisterUserCommand';
 import RegisterUserResponseDto from './model/RegisterUserResponseDto';
 import SetUserPasswordCommand from './model/SetUserPasswordCommand';
 import AppointmentControllerApi from './api/AppointmentControllerApi';
+import AuthControllerApi from './api/AuthControllerApi';
 import ReviewControllerApi from './api/ReviewControllerApi';
 import ServiceControllerApi from './api/ServiceControllerApi';
 import UserControllerApi from './api/UserControllerApi';
+import UserControlleraApi from './api/UserControlleraApi';
 
 
 /**
@@ -126,6 +129,12 @@ export {
      * @property {module:model/GetUserDto}
      */
     GetUserDto,
+
+    /**
+     * The LoginUserCommand model constructor.
+     * @property {module:model/LoginUserCommand}
+     */
+    LoginUserCommand,
 
     /**
      * The PageMetadata model constructor.
@@ -218,6 +227,12 @@ export {
     AppointmentControllerApi,
 
     /**
+    * The AuthControllerApi service constructor.
+    * @property {module:api/AuthControllerApi}
+    */
+    AuthControllerApi,
+
+    /**
     * The ReviewControllerApi service constructor.
     * @property {module:api/ReviewControllerApi}
     */
@@ -233,5 +248,11 @@ export {
     * The UserControllerApi service constructor.
     * @property {module:api/UserControllerApi}
     */
-    UserControllerApi
+    UserControllerApi,
+
+    /**
+    * The UserControlleraApi service constructor.
+    * @property {module:api/UserControlleraApi}
+    */
+    UserControlleraApi
 };

@@ -116,7 +116,7 @@ let serviceId = 789; // Number |
 let opts = {
   'page': 0, // Number | 
   'pageSize': 2, // Number | 
-  'sortBy': "'createdAt'", // String | 
+  'sortBy': "'created_at'", // String | 
   'sortDir': "'desc'" // String | 
 };
 apiInstance.getByService(serviceId, opts, (error, data, response) => {
@@ -136,7 +136,7 @@ Name | Type | Description  | Notes
  **serviceId** | **Number**|  | 
  **page** | **Number**|  | [optional] [default to 0]
  **pageSize** | **Number**|  | [optional] [default to 2]
- **sortBy** | **String**|  | [optional] [default to &#39;createdAt&#39;]
+ **sortBy** | **String**|  | [optional] [default to &#39;created_at&#39;]
  **sortDir** | **String**|  | [optional] [default to &#39;desc&#39;]
 
 ### Return type
@@ -169,7 +169,7 @@ let userId = 789; // Number |
 let opts = {
   'page': 0, // Number | 
   'pageSize': 2, // Number | 
-  'sortBy': "'createdAt'", // String | 
+  'sortBy': "'created_at'", // String | 
   'sortDir': "'desc'" // String | 
 };
 apiInstance.getsByUser(userId, opts, (error, data, response) => {
@@ -189,7 +189,7 @@ Name | Type | Description  | Notes
  **userId** | **Number**|  | 
  **page** | **Number**|  | [optional] [default to 0]
  **pageSize** | **Number**|  | [optional] [default to 2]
- **sortBy** | **String**|  | [optional] [default to &#39;createdAt&#39;]
+ **sortBy** | **String**|  | [optional] [default to &#39;created_at&#39;]
  **sortDir** | **String**|  | [optional] [default to &#39;desc&#39;]
 
 ### Return type

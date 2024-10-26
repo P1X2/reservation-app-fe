@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import UserControllerApi from '../../generated-api-client/src/api/UserControllerApi'; // Make sure this path is correct based on your project structure
+import AuthControllerApi from '../../generated-api-client/src/api/AuthControllerApi'; // Make sure this path is correct based on your project structure
 
 function RegisterForm({ onClose }) {
     const [username, setUsername] = useState('');
@@ -13,7 +13,7 @@ function RegisterForm({ onClose }) {
     const handleRegister = async (event) => {
         event.preventDefault();
 
-        const api = new UserControllerApi();
+        const api = new AuthControllerApi();
 
         const registerUserCommand = {
             username: username,

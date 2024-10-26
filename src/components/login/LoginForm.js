@@ -1,37 +1,44 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import UserControllerApi from '../../generated-api-client/src/api/UserControllerApi';
+import { useNavigate } from 'react-router-dom';
+import AuthControllerApi from '../../generated-api-client/src/api/AuthControllerApi';
+import ApiClient from '../../generated-api-client/src/ApiClient';
 
 function LoginForm({ onClose }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // Function to handle login
   const handleLogin = async (event) => {
     event.preventDefault();
-    console.log('Login attempt with:', username, password);
+    const userApi = new AuthControllerApi();
 
-    const userId = 1;
+    try {
+      const loginUserCommand = { username, password };
+      userApi.login(loginUserCommand, (error, data, response) => {
+        if (error) {
+          setError('Login failed: ' + error.message);
+          console.error('Login Error:', error);
+        } else {
+          const jwtToken = response.text;
+          console.log(response)
 
-    console.log('API base URL:', process.env.REACT_APP_API_BASE_URL);
-
-    const userApi = new UserControllerApi();
-
-    userApi.getById(userId, (error, data, response) => {
-      if (error) {
-        setError('Error fetching user data: ' + error.message);
-        console.error('API Error:', error);
-      } else {
-        console.log('Fetched User Data:', data); // Log the fetched user data
-      }
-    });
+          localStorage.setItem('jwtToken', jwtToken);
+          console.log(localStorage.getItem('jwtToken'))
+          navigate('/my-appointments');
+        }
+      });
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('An error occurred during login');
+    }
   };
 
   return (
     <Form onSubmit={handleLogin} className="bg-dark p-3 rounded text-white">
       <Form.Group className="mb-3">
-        <Form.Label>Nazwa użytkownika</Form.Label>
+        <Form.Label>Username</Form.Label>
         <Form.Control
           type="text"
           value={username}
@@ -42,7 +49,7 @@ function LoginForm({ onClose }) {
         />
       </Form.Group>
       <Form.Group className="mb-3">
-        <Form.Label>Hasło</Form.Label>
+        <Form.Label>Password</Form.Label>
         <Form.Control
           type="password"
           value={password}
@@ -54,7 +61,7 @@ function LoginForm({ onClose }) {
       </Form.Group>
       {error && <p className="text-danger">{error}</p>}
       <Button type="submit" variant="primary" className="w-100">
-        Dalej
+        Login
       </Button>
     </Form>
   );

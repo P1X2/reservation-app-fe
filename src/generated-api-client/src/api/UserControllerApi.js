@@ -18,8 +18,6 @@ import PatchUserCommand from '../model/PatchUserCommand';
 import PatchUserResponseDto from '../model/PatchUserResponseDto';
 import PatchUserRoleCommand from '../model/PatchUserRoleCommand';
 import PatchUserStatusCommand from '../model/PatchUserStatusCommand';
-import RegisterUserCommand from '../model/RegisterUserCommand';
-import RegisterUserResponseDto from '../model/RegisterUserResponseDto';
 import SetUserPasswordCommand from '../model/SetUserPasswordCommand';
 
 /**
@@ -274,46 +272,6 @@ export default class UserControllerApi {
       let returnType = null;
       return this.apiClient.callApi(
         '/user/change-status', 'PATCH',
-        pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
-      );
-    }
-
-    /**
-     * Callback function to receive the result of the registerUser operation.
-     * @callback module:api/UserControllerApi~registerUserCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/RegisterUserResponseDto} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
-     */
-
-    /**
-     * @param {module:model/RegisterUserCommand} registerUserCommand 
-     * @param {module:api/UserControllerApi~registerUserCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/RegisterUserResponseDto}
-     */
-    registerUser(registerUserCommand, callback) {
-      let postBody = registerUserCommand;
-      // verify the required parameter 'registerUserCommand' is set
-      if (registerUserCommand === undefined || registerUserCommand === null) {
-        throw new Error("Missing the required parameter 'registerUserCommand' when calling registerUser");
-      }
-
-      let pathParams = {
-      };
-      let queryParams = {
-      };
-      let headerParams = {
-      };
-      let formParams = {
-      };
-
-      let authNames = [];
-      let contentTypes = ['application/json'];
-      let accepts = ['*/*'];
-      let returnType = RegisterUserResponseDto;
-      return this.apiClient.callApi(
-        '/user/register', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

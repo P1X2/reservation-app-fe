@@ -45,8 +45,7 @@ class ApiClient {
          * The authentication methods to be included for all API calls.
          * @type {Array.<String>}
          */
-        this.authentications = {
-        }
+        this.authentications = {}
 
         /**
          * The default HTTP headers to be included for all API calls.
@@ -295,53 +294,12 @@ class ApiClient {
     * @param {Array.<String>} authNames An array of authentication method names.
     */
     applyAuthToRequest(request, authNames) {
-        authNames.forEach((authName) => {
-            var auth = this.authentications[authName];
-            switch (auth.type) {
-                case 'basic':
-                    if (auth.username || auth.password) {
-                        request.auth(auth.username || '', auth.password || '');
-                    }
-
-                    break;
-                case 'bearer':
-                    if (auth.accessToken) {
-                        var localVarBearerToken = typeof auth.accessToken === 'function'
-                          ? auth.accessToken()
-                          : auth.accessToken
-                        request.set({'Authorization': 'Bearer ' + localVarBearerToken});
-                    }
-
-                    break;
-                case 'apiKey':
-                    if (auth.apiKey) {
-                        var data = {};
-                        if (auth.apiKeyPrefix) {
-                            data[auth.name] = auth.apiKeyPrefix + ' ' + auth.apiKey;
-                        } else {
-                            data[auth.name] = auth.apiKey;
-                        }
-
-                        if (auth['in'] === 'header') {
-                            request.set(data);
-                        } else {
-                            request.query(data);
-                        }
-                    }
-
-                    break;
-                case 'oauth2':
-                    if (auth.accessToken) {
-                        request.set({'Authorization': 'Bearer ' + auth.accessToken});
-                    }
-
-                    break;
-                default:
-                    throw new Error('Unknown authentication type: ' + auth.type);
-            }
-        });
+        const token = localStorage.getItem('jwtToken');
+        console.log(token)
+        if (token) {
+            request.set({ 'Authorization': 'Bearer ' + token });
+        }
     }
-
    /**
     * Deserializes an HTTP response body into a value of the specified type.
     * @param {Object} response A SuperAgent response object.
@@ -393,116 +351,48 @@ class ApiClient {
     * @param {module:ApiClient~callApiCallback} callback The callback function.
     * @returns {Object} The SuperAgent request object.
     */
-    callApi(path, httpMethod, pathParams,
-        queryParams, headerParams, formParams, bodyParam, authNames, contentTypes, accepts,
-        returnType, apiBasePath, callback) {
+   callApi(path, httpMethod, pathParams,
+    queryParams, headerParams, formParams, bodyParam, authNames, contentTypes, accepts,
+    returnType, apiBasePath, callback) {
 
-        var url = this.buildUrl(path, pathParams, apiBasePath);
-        var request = superagent(httpMethod, url);
+    const url = this.buildUrl(path, pathParams, apiBasePath);
+    const request = superagent(httpMethod, url);
 
-        if (this.plugins !== null) {
-            for (var index in this.plugins) {
-                if (this.plugins.hasOwnProperty(index)) {
-                    request.use(this.plugins[index])
-                }
-            }
+    this.applyAuthToRequest(request, authNames);
+    request.query(this.normalizeParams(queryParams));
+    request.set(this.defaultHeaders).set(this.normalizeParams(headerParams));
+    request.timeout(this.timeout);
+
+    const contentType = this.jsonPreferredMime(contentTypes);
+    if (contentType && contentType !== 'multipart/form-data') {
+        request.type(contentType);
+    }
+
+    if (contentType === 'application/x-www-form-urlencoded') {
+        request.send(querystring.stringify(this.normalizeParams(formParams)));
+    } else if (bodyParam !== null && bodyParam !== undefined) {
+        request.send(bodyParam);
+    }
+
+    const accept = this.jsonPreferredMime(accepts);
+    if (accept) {
+        request.accept(accept);
+    }
+
+    if (returnType === 'Blob') {
+        request.responseType('blob');
+    } else if (returnType === 'String') {
+        request.responseType('text');
+    }
+
+    request.end((error, response) => {
+        if (callback) {
+            const data = !error ? this.deserialize(response, returnType) : null;
+            callback(error, data, response);
         }
+    });
 
-        // apply authentications
-        this.applyAuthToRequest(request, authNames);
-
-        // set query parameters
-        if (httpMethod.toUpperCase() === 'GET' && this.cache === false) {
-            queryParams['_'] = new Date().getTime();
-        }
-
-        request.query(this.normalizeParams(queryParams));
-
-        // set header parameters
-        request.set(this.defaultHeaders).set(this.normalizeParams(headerParams));
-
-        // set requestAgent if it is set by user
-        if (this.requestAgent) {
-          request.agent(this.requestAgent);
-        }
-
-        // set request timeout
-        request.timeout(this.timeout);
-
-        var contentType = this.jsonPreferredMime(contentTypes);
-        if (contentType) {
-            // Issue with superagent and multipart/form-data (https://github.com/visionmedia/superagent/issues/746)
-            if(contentType != 'multipart/form-data') {
-                request.type(contentType);
-            }
-        }
-
-        if (contentType === 'application/x-www-form-urlencoded') {
-            request.send(querystring.stringify(this.normalizeParams(formParams)));
-        } else if (contentType == 'multipart/form-data') {
-            var _formParams = this.normalizeParams(formParams);
-            for (var key in _formParams) {
-                if (_formParams.hasOwnProperty(key)) {
-                    let _formParamsValue = _formParams[key];
-                    if (this.isFileParam(_formParamsValue)) {
-                        // file field
-                        request.attach(key, _formParamsValue);
-                    } else if (Array.isArray(_formParamsValue) && _formParamsValue.length
-                        && this.isFileParam(_formParamsValue[0])) {
-                        // multiple files
-                        _formParamsValue.forEach(file => request.attach(key, file));
-                    } else {
-                        request.field(key, _formParamsValue);
-                    }
-                }
-            }
-        } else if (bodyParam !== null && bodyParam !== undefined) {
-            if (!request.header['Content-Type']) {
-                request.type('application/json');
-            }
-            request.send(bodyParam);
-        }
-
-        var accept = this.jsonPreferredMime(accepts);
-        if (accept) {
-            request.accept(accept);
-        }
-
-        if (returnType === 'Blob') {
-          request.responseType('blob');
-        } else if (returnType === 'String') {
-          request.responseType('text');
-        }
-
-        // Attach previously saved cookies, if enabled
-        if (this.enableCookies){
-            if (typeof window === 'undefined') {
-                this.agent._attachCookies(request);
-            }
-            else {
-                request.withCredentials();
-            }
-        }
-
-        request.end((error, response) => {
-            if (callback) {
-                var data = null;
-                if (!error) {
-                    try {
-                        data = this.deserialize(response, returnType);
-                        if (this.enableCookies && typeof window === 'undefined'){
-                            this.agent._saveCookies(response);
-                        }
-                    } catch (err) {
-                        error = err;
-                    }
-                }
-
-                callback(error, data, response);
-            }
-        });
-
-        return request;
+    return request;
     }
 
     /**

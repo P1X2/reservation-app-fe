@@ -22,6 +22,7 @@
     "generate-api-client": "npx @openapitools/openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g javascript -o ./src/generated-api-client",
     "start": "npm run generate-api-client && cross-env NODE_ENV=production node server.js",
     "dev": "cross-env NODE_ENV=development react-app-rewired start",
+    "dev-swagger": "npm run generate-api-client && cross-env NODE_ENV=development react-app-rewired start",
     "build": "npm run generate-api-client && react-app-rewired build",
     "build-legacy": "npm run generate-api-client && cross-env NODE_OPTIONS=--openssl-legacy-provider react-app-rewired build"
   },

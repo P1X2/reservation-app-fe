@@ -126,6 +126,8 @@ Class | Method | HTTP request | Description
 *OpenApiDefinition.AppointmentControllerApi* | [**getAppointmentsByDate**](docs/AppointmentControllerApi.md#getAppointmentsByDate) | **GET** /appointment/get-by-date | 
 *OpenApiDefinition.AppointmentControllerApi* | [**getAppointmentsByUserId**](docs/AppointmentControllerApi.md#getAppointmentsByUserId) | **GET** /appointment/get-by-userId/{userId} | 
 *OpenApiDefinition.AppointmentControllerApi* | [**updateAppointmentStatus**](docs/AppointmentControllerApi.md#updateAppointmentStatus) | **PUT** /appointment/update-status/{appointmentId} | 
+*OpenApiDefinition.AuthControllerApi* | [**login**](docs/AuthControllerApi.md#login) | **POST** /login | 
+*OpenApiDefinition.AuthControllerApi* | [**registerUser**](docs/AuthControllerApi.md#registerUser) | **POST** /register | 
 *OpenApiDefinition.ReviewControllerApi* | [**addNew**](docs/ReviewControllerApi.md#addNew) | **POST** /review/add-review | 
 *OpenApiDefinition.ReviewControllerApi* | [**delete1**](docs/ReviewControllerApi.md#delete1) | **DELETE** /review/delete | 
 *OpenApiDefinition.ReviewControllerApi* | [**getByService**](docs/ReviewControllerApi.md#getByService) | **GET** /review/get-by-serviceId/{serviceId} | 
@@ -142,7 +144,7 @@ Class | Method | HTTP request | Description
 *OpenApiDefinition.UserControllerApi* | [**patchUser**](docs/UserControllerApi.md#patchUser) | **PATCH** /user/patch-user-data | 
 *OpenApiDefinition.UserControllerApi* | [**patchUserRole**](docs/UserControllerApi.md#patchUserRole) | **PATCH** /user/change-role | 
 *OpenApiDefinition.UserControllerApi* | [**patchUserStatus**](docs/UserControllerApi.md#patchUserStatus) | **PATCH** /user/change-status | 
-*OpenApiDefinition.UserControllerApi* | [**registerUser**](docs/UserControllerApi.md#registerUser) | **POST** /user/register | 
+*OpenApiDefinition.UserControlleraApi* | [**getCurrentUserDetails**](docs/UserControlleraApi.md#getCurrentUserDetails) | **GET** /current-user | 
 
 
 ## Documentation for Models
@@ -155,6 +157,7 @@ Class | Method | HTTP request | Description
  - [OpenApiDefinition.GetReviewDto](docs/GetReviewDto.md)
  - [OpenApiDefinition.GetServiceDto](docs/GetServiceDto.md)
  - [OpenApiDefinition.GetUserDto](docs/GetUserDto.md)
+ - [OpenApiDefinition.LoginUserCommand](docs/LoginUserCommand.md)
  - [OpenApiDefinition.PageMetadata](docs/PageMetadata.md)
  - [OpenApiDefinition.PagedModelGetAppointmentDto](docs/PagedModelGetAppointmentDto.md)
  - [OpenApiDefinition.PagedModelGetReviewDto](docs/PagedModelGetReviewDto.md)

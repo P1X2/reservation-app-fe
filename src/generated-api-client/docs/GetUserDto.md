@@ -6,7 +6,6 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **userId** | **Number** |  | [optional] 
 **username** | **String** |  | [optional] 
-**password** | **String** |  | [optional] 
 **email** | **String** |  | [optional] 
 **name** | **String** |  | [optional] 
 **surname** | **String** |  | [optional] 
