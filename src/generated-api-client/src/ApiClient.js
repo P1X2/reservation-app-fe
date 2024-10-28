@@ -13,7 +13,7 @@
 
 
 import superagent from "superagent";
-import querystring from "querystring";
+import qs from "qs"
 
 /**
 * @module ApiClient
@@ -369,7 +369,7 @@ class ApiClient {
     }
 
     if (contentType === 'application/x-www-form-urlencoded') {
-        request.send(querystring.stringify(this.normalizeParams(formParams)));
+        request.send(qs.stringify(this.normalizeParams(formParams)));
     } else if (bodyParam !== null && bodyParam !== undefined) {
         request.send(bodyParam);
     }
