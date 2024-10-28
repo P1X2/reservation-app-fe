@@ -33,7 +33,7 @@ class ApiClient {
      * Overrides the default value set in spec file if present
      * @param {String} basePath
      */
-    constructor(basePath = 'http://localhost:8080') {
+    constructor(basePath = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080') {
         /**
          * The base URL against which to resolve every API call's (relative) path.
          * @type {String}
@@ -482,10 +482,10 @@ class ApiClient {
     hostSettings() {
         return [
             {
-              'url': "http://localhost:8080",
-              'description': "Generated server url",
+            'url': process.env.REACT_APP_API_BASE_URL || "http://localhost:8080",
+            'description': "Generated server url",
             }
-      ];
+        ];
     }
 
     getBasePathFromSettings(index, variables={}) {
