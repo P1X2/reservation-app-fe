@@ -10,6 +10,7 @@
     "bootstrap": "^5.3.3",
     "cross-env": "^7.0.3",
     "express": "^4.21.1",
+    "qs": "^6.13.0",
     "querystring-es3": "^0.2.1",
     "react": "^18.3.0",
     "react-bootstrap": "^2.10.5",
@@ -42,6 +43,7 @@
     "node": "16.x"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "react-app-rewired": "^2.2.1",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4",
