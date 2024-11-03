@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Spinner, Alert, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'
 import AppointmentControllerApi from '../generated-api-client/src/api/AppointmentControllerApi';
 import ReviewControllerApi from '../generated-api-client/src/api/ReviewControllerApi';
 
@@ -15,13 +16,33 @@ function MyAppointments() {
     const [rating, setRating] = useState(5);
     const navigate = useNavigate();
 
-    const clientId = 1; // Zamokowany klient ID na 1
+    const [clientId, setClientId] = useState(null);
 
     useEffect(() => {
-        fetchAppointments();
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                const id = decodedToken.jti;
+                setClientId(id);
+            } catch (e) {
+                console.error('Nie udało się zdekodować tokenu', e);
+                setError('Nie udało się zdekodować tokenu.');
+                setLoading(false);
+            }
+        } else {
+            setError('Brak tokenu uwierzytelniającego.');
+            setLoading(false);
+        }
     }, []);
 
-    const fetchAppointments = () => {
+    useEffect(() => {
+        if (clientId) {
+            fetchAppointments(clientId);
+        }
+    }, [clientId]);
+
+    const fetchAppointments = (clientId) => {
         const api = new AppointmentControllerApi();
         api.getAppointmentsByUserId(clientId, { page: 0, pageSize: 10, sortBy: 'appointmentDate', sortDir: 'asc' }, (error, data) => {
             if (error) {
@@ -127,7 +148,6 @@ function MyAppointments() {
                 <p>Brak wizyt do wyświetlenia</p>
             )}
 
-            {/* Modal potwierdzenia usunięcia */}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Potwierdzenie usunięcia</Modal.Title>
@@ -145,7 +165,6 @@ function MyAppointments() {
                 </Modal.Footer>
             </Modal>
 
-            {/* Modal dodawania recenzji */}
             <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Dodaj komentarz do wizyty</Modal.Title>

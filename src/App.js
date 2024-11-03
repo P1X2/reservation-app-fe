@@ -7,17 +7,31 @@ import CreateAppointmentForm from './components/CreateAppointmentForm';
 import ServiceList from './components/ServiceList';
 import MyAppointments from './components/MyAppointments';
 import AddEmployeeForm from './components/AddEmployeeForm';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/home" element={<HomePage />} /> 
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route
+          path="/appointment"
+          element={<PrivateRoute element={CreateAppointmentForm} />}
+        />
+        <Route
+          path="/services"
+          element={<PrivateRoute element={ServiceList} />}
+        />
+        <Route
+          path="/my-appointments"
+          element={<PrivateRoute element={MyAppointments} />}
+        />
+        <Route
+          path="/manager"
+          element={<PrivateRoute element={AddEmployeeForm} />}
+        />
         <Route path="*" element={<Navigate to="/home" replace />} />
-        <Route path="/appointment" element={<CreateAppointmentForm />} />
-        <Route path="/services" element={<ServiceList />} />
-        <Route path="/my-appointments" element={<MyAppointments />} />
-        <Route path="/manager" element={<AddEmployeeForm />} />
       </Routes>
     </Router>
   );
