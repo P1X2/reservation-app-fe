@@ -38,7 +38,7 @@ function ServiceList() {
         setShowReviewModal(true);
 
         const reviewApi = new ReviewControllerApi();
-        reviewApi.getByService(service.serviceId, { page: 0, pageSize: 10, sortBy: 'createdAt', sortDir: 'desc' }, (error, data) => {
+        reviewApi.getByService(service.serviceId, { page: 0, pageSize: 10, sortBy: 'created_at', sortDir: 'desc' }, (error, data) => {
             if (error) {
                 setErrorReviews('Błąd podczas pobierania recenzji: ' + error.message);
                 setLoadingReviews(false);

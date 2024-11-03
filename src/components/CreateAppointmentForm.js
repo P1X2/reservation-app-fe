@@ -18,14 +18,12 @@ function CreateAppointmentForm() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        if (!preselectedService) {
-            fetchServices();
-        }
+        fetchServices();
     }, []);
 
     const fetchServices = () => {
         const api = new ServiceControllerApi();
-        api.getAllServices({page: 0, pageSize: 10}, (error, data, response) => {
+        api.getAllServices({ page: 0, pageSize: 10, sortBy: 'createdAt', sortDir: 'desc' }, (error, data, response) => {
             if (error) {
                 console.error('Error fetching services:', error);
                 setError('Failed to fetch services');
