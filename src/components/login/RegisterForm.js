@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import AuthControllerApi from '../../generated-api-client/src/api/AuthControllerApi'; // Make sure this path is correct based on your project structure
+import AuthControllerApi from '../../generated-api-client/src/api/AuthControllerApi';
 
 function RegisterForm({ onClose }) {
     const [username, setUsername] = useState('');

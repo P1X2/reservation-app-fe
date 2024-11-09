@@ -8,30 +8,33 @@ import ServiceList from './components/ServiceList';
 import MyAppointments from './components/MyAppointments';
 import AddEmployeeForm from './components/AddEmployeeForm';
 import PrivateRoute from './components/PrivateRoute';
+import MainLayout from './components/main-layout/MainLayout';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/" element={<Navigate to="/home" replace />} />
-        <Route
-          path="/appointment"
-          element={<PrivateRoute element={CreateAppointmentForm} />}
-        />
-        <Route
-          path="/services"
-          element={<PrivateRoute element={ServiceList} />}
-        />
-        <Route
-          path="/my-appointments"
-          element={<PrivateRoute element={MyAppointments} />}
-        />
-        <Route
-          path="/manager"
-          element={<PrivateRoute element={AddEmployeeForm} />}
-        />
-        <Route path="*" element={<Navigate to="/home" replace />} />
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route
+            path="/appointment"
+            element={<PrivateRoute element={CreateAppointmentForm} />}
+          />
+          <Route
+            path="/services"
+            element={<PrivateRoute element={ServiceList} />}
+          />
+          <Route
+            path="/my-appointments"
+            element={<PrivateRoute element={MyAppointments} />}
+          />
+          <Route
+            path="/manager"
+            element={<PrivateRoute element={AddEmployeeForm} />}
+          />
+          <Route path="*" element={<Navigate to="/home" replace />} />
+        </Route>
       </Routes>
     </Router>
   );
