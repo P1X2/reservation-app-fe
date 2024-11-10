@@ -13,9 +13,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import ServiceControllerApi from '../generated-api-client/src/api/ServiceControllerApi';
 import ReviewControllerApi from '../generated-api-client/src/api/ReviewControllerApi';
+import UserControllerApi from '../generated-api-client/src/api/UserControllerApi';
 import { AuthContext } from './AuthContext';
-
-
+import jwtDecode from 'jwt-decode';
 
 function ServiceList() {
   const [services, setServices] = useState([]);
@@ -36,11 +36,12 @@ function ServiceList() {
       const decodedToken = jwtDecode(token);
       roles = decodedToken.roles || [];
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   }
-
+  const isClient = roles.includes('CLIENT');
   const isEmployee = roles.includes('EMPLOYEE');
+  const isPresident = roles.includes('PRESIDENT');
 
   useEffect(() => {
     const api = new ServiceControllerApi();
@@ -94,6 +95,21 @@ function ServiceList() {
     });
   };
 
+  const handleBanUser = (userId) => {
+    const userApi = new UserControllerApi();
+    const command = {
+      userId: userId,
+      userStatus: 'SUSPENDED',
+    };
+    userApi.patchUserStatus(command, (error) => {
+      if (error) {
+        setErrorReviews('Błąd podczas banowania użytkownika: ' + error.message);
+      } else {
+        alert('Użytkownik został zbanowany.');
+      }
+    });
+  };
+
   return (
     <Container fluid className="min-vh-100 py-5">
       <Row className="justify-content-center">
@@ -128,14 +144,16 @@ function ServiceList() {
                       <td>{service.durationMinutes}</td>
                       <td>{service.price}</td>
                       <td>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          className="me-2 mb-2"
-                          onClick={() => handleCreateAppointment(service)}
-                        >
-                          Zarezerwuj
-                        </Button>
+                        {isClient && (
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="me-2 mb-2"
+                            onClick={() => handleCreateAppointment(service)}
+                          >
+                            Zarezerwuj
+                          </Button>
+                        )}
                         <Button
                           variant="outline-light"
                           size="sm"
@@ -156,7 +174,6 @@ function ServiceList() {
         </Col>
       </Row>
 
-      {/* Modal z recenzjami */}
       <Modal
         show={showReviewModal}
         onHide={() => setShowReviewModal(false)}
@@ -181,16 +198,29 @@ function ServiceList() {
                     <div>
                       <strong>Ocena: {review.rating}/5</strong>
                       <p>{review.reviewContent}</p>
-                      <small>{new Date(review.createdAt).toLocaleString()}</small>
+                      <small>
+                        {new Date(review.createdAt).toLocaleString()} -{' '}
+                        {review.userName} {review.userSurname}
+                      </small>
                     </div>
-                    {isEmployee && (
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => handleDeleteReview(review.reviewId)}
-                      >
-                        Usuń
-                      </Button>
+                    {(isEmployee || isPresident) && (
+                      <div className="d-flex flex-column">
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          className="mb-2"
+                          onClick={() => handleDeleteReview(review.reviewId)}
+                        >
+                          Usuń
+                        </Button>
+                        <Button
+                          variant="outline-warning"
+                          size="sm"
+                          onClick={() => handleBanUser(review.userId)}
+                        >
+                          Zbanuj Użytkownika
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </ListGroup.Item>
