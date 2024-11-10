@@ -7,6 +7,7 @@ import CreateAppointmentForm from './components/CreateAppointmentForm';
 import ServiceList from './components/ServiceList';
 import MyAppointments from './components/MyAppointments';
 import AddEmployeeForm from './components/AddEmployeeForm';
+import EmployeeAppointments from './components/EmployeeAppointments';
 import PrivateRoute from './components/PrivateRoute';
 import MainLayout from './components/main-layout/MainLayout';
 
@@ -31,7 +32,11 @@ function App() {
           />
           <Route
             path="/manager"
-            element={<PrivateRoute element={AddEmployeeForm} />}
+            element={<PrivateRoute element={AddEmployeeForm} requiredRoles={['PRESIDENT']} />}
+          />
+          <Route
+            path="/employee-appointments"
+            element={<PrivateRoute element={EmployeeAppointments} requiredRoles={['EMPLOYEE', 'PRESIDENT']} />}
           />
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Route>
