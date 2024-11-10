@@ -9,6 +9,7 @@ import {
   Alert,
   Spinner,
   Modal,
+  Badge,
 } from 'react-bootstrap';
 import AppointmentControllerApi from '../generated-api-client/src/api/AppointmentControllerApi';
 
@@ -19,6 +20,35 @@ function EmployeeAppointments() {
   const [loading, setLoading] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+
+  const statusMap = {
+    PENDING_PAYMENT: 'Oczekujące na płatność',
+    DONE_PAYMENT: 'Płatność zakończona',
+    APPOINTMENT_CONFIRMED: 'Rezerwacja potwierdzona',
+    COMPLETED: 'Zakończona',
+    CANCELLED: 'Anulowana',
+  };
+
+  const mapStatusToPolish = (status) => {
+    return statusMap[status] || status;
+  };
+
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case 'PENDING_PAYMENT':
+        return 'warning';
+      case 'DONE_PAYMENT':
+        return 'success';
+      case 'APPOINTMENT_CONFIRMED':
+        return 'info';
+      case 'COMPLETED':
+        return 'secondary';
+      case 'CANCELLED':
+        return 'danger';
+      default:
+        return 'light';
+    }
+  };
 
   const handleSearch = () => {
     if (!clientId) {
@@ -57,11 +87,14 @@ function EmployeeAppointments() {
         setError('Błąd podczas odwoływania wizyty: ' + error.message);
       } else {
         setAppointments(
-          appointments.filter(
-            (app) => app.appointmentId !== selectedAppointment.appointmentId
+          appointments.map((app) =>
+            app.appointmentId === selectedAppointment.appointmentId
+              ? { ...app, status: 'CANCELLED' }
+              : app
           )
         );
         setShowCancelModal(false);
+        setSelectedAppointment(null);
       }
     });
   };
@@ -109,7 +142,7 @@ function EmployeeAppointments() {
                     <th>Usługa</th>
                     <th>Data</th>
                     <th>Pracownik</th>
-                    <th>Status</th>
+                    <th>Status</th> {/* Dodanie kolumny Status */}
                     <th>Akcje</th>
                   </tr>
                 </thead>
@@ -118,8 +151,12 @@ function EmployeeAppointments() {
                     <tr key={appointment.appointmentId}>
                       <td>{appointment.service.name}</td>
                       <td>{new Date(appointment.appointmentDate).toLocaleString()}</td>
-                      <td>{appointment.employee.name}</td>
-                      <td>{appointment.status}</td>
+                      <td>{appointment.employee.name} {appointment.employee.surname}</td>
+                      <td>
+                        <Badge bg={getStatusVariant(appointment.status)}>
+                          {mapStatusToPolish(appointment.status)}
+                        </Badge>
+                      </td>
                       <td>
                         {(new Date(appointment.appointmentDate) > new Date() && appointment.status !== "CANCELLED") && (
                           <Button

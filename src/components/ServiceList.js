@@ -15,7 +15,7 @@ import ServiceControllerApi from '../generated-api-client/src/api/ServiceControl
 import ReviewControllerApi from '../generated-api-client/src/api/ReviewControllerApi';
 import UserControllerApi from '../generated-api-client/src/api/UserControllerApi';
 import { AuthContext } from './AuthContext';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 
 function ServiceList() {
   const [services, setServices] = useState([]);
@@ -39,9 +39,22 @@ function ServiceList() {
       console.log(e);
     }
   }
+
   const isClient = roles.includes('CLIENT');
   const isEmployee = roles.includes('EMPLOYEE');
   const isPresident = roles.includes('PRESIDENT');
+
+  const statusMap = {
+    PENDING_PAYMENT: 'Oczekujące na płatność',
+    DONE_PAYMENT: 'Płatność zakończona',
+    APPOINTMENT_CONFIRMED: 'Rezerwacja potwierdzona',
+    COMPLETED: 'Zakończona',
+    CANCELLED: 'Anulowana',
+  };
+
+  const mapStatusToPolish = (status) => {
+    return statusMap[status] || status;
+  };
 
   useEffect(() => {
     const api = new ServiceControllerApi();
@@ -133,6 +146,7 @@ function ServiceList() {
                     <th>Opis</th>
                     <th>Czas trwania (min)</th>
                     <th>Cena (PLN)</th>
+                    <th>Status</th>
                     <th>Akcja</th>
                   </tr>
                 </thead>
@@ -143,6 +157,7 @@ function ServiceList() {
                       <td>{service.description}</td>
                       <td>{service.durationMinutes}</td>
                       <td>{service.price}</td>
+                      <td>{mapStatusToPolish(service.status)}</td>
                       <td>
                         {isClient && (
                           <Button

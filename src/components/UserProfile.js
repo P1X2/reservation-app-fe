@@ -4,6 +4,17 @@ import UserControllerApi from '../generated-api-client/src/api/UserControllerApi
 import { AuthContext } from './AuthContext';
 import {jwtDecode} from 'jwt-decode';
 
+const roleMap = {
+  EMPLOYEE: 'Pracownik',
+  PRESIDENT: 'Prezes',
+  CLIENT: 'Klient',
+};
+
+const statusMap = {
+  ACTIVE: 'Aktywny',
+  SUSPENDED: 'Zawieszony',
+};
+
 function UserProfile() {
   const { token } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
@@ -22,6 +33,7 @@ function UserProfile() {
   const [passwordError, setPasswordError] = useState(null);
 
   const [userId, setUserId] = useState(null);
+
   useEffect(() => {
     if (token) {
       try {
@@ -29,7 +41,7 @@ function UserProfile() {
         setUserId(decodedToken.jti);
         setRoles(decodedToken.roles || []);
       } catch (e) {
-        console.log(e);
+        console.log('Błąd dekodowania tokenu:', e);
       }
     }
   }, [token]);
@@ -68,7 +80,6 @@ function UserProfile() {
       }
     });
   };
-
   const handlePasswordChange = (e) => {
     e.preventDefault();
     const api = new UserControllerApi();
@@ -88,6 +99,12 @@ function UserProfile() {
         setNewPassword('');
       }
     });
+  };
+  const mapRolesToPolish = (rolesArray) => {
+    return rolesArray.map((role) => roleMap[role] || role).join(', ');
+  };
+  const mapStatusToPolish = (status) => {
+    return statusMap[status] || status;
   };
 
   return (
@@ -116,8 +133,13 @@ function UserProfile() {
                   <p>
                     <strong>Email:</strong> {userData.email}
                   </p>
+                  {userData.status && (
+                    <p>
+                      <strong>Status:</strong> {mapStatusToPolish(userData.status)}
+                    </p>
+                  )}
                   <p>
-                    <strong>Rola:</strong> {roles.join(', ')}
+                    <strong>Rola:</strong> {mapRolesToPolish(roles)}
                   </p>
                 </Tab>
                 <Tab eventKey="edit" title="Edytuj Dane">
