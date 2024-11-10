@@ -45,35 +45,6 @@ function ServiceList() {
   const isEmployee = roles.includes('EMPLOYEE');
   const isPresident = roles.includes('PRESIDENT');
 
-  const statusMap = {
-    PENDING_PAYMENT: 'Oczekujące na płatność',
-    DONE_PAYMENT: 'Płatność zakończona',
-    APPOINTMENT_CONFIRMED: 'Rezerwacja potwierdzona',
-    COMPLETED: 'Zakończona',
-    CANCELLED: 'Anulowana',
-  };
-
-  const mapStatusToPolish = (status) => {
-    return statusMap[status] || status;
-  };
-
-  const getStatusVariant = (status) => {
-    switch (status) {
-      case 'PENDING_PAYMENT':
-        return 'warning';
-      case 'DONE_PAYMENT':
-        return 'success';
-      case 'APPOINTMENT_CONFIRMED':
-        return 'info';
-      case 'COMPLETED':
-        return 'secondary';
-      case 'CANCELLED':
-        return 'danger';
-      default:
-        return 'light';
-    }
-  };
-
   useEffect(() => {
     const api = new ServiceControllerApi();
     api.getAllServices(
