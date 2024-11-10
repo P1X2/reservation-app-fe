@@ -21,7 +21,10 @@ function LoginForm({ onClose }) {
         if (error) {
           setError('Login failed: ' + error.message);
           console.error('Login Error:', error);
-        } else {
+        } else if (response.status === 401) {
+          setError('Twoje konto zostało zawieszone');
+        }
+         else {
           const jwtToken = response.text;
           login(jwtToken);
           localStorage.setItem('jwtToken', jwtToken);
