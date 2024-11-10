@@ -9,6 +9,7 @@ import {
   Alert,
   Modal,
   Form,
+  Badge,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import AppointmentControllerApi from '../generated-api-client/src/api/AppointmentControllerApi';
@@ -28,6 +29,35 @@ function MyAppointments() {
   const navigate = useNavigate();
 
   const [clientId, setClientId] = useState(null);
+
+  const statusMap = {
+    PENDING_PAYMENT: 'Oczekujące na płatność',
+    DONE_PAYMENT: 'Płatność zakończona',
+    APPOINTMENT_CONFIRMED: 'Rezerwacja potwierdzona',
+    COMPLETED: 'Zakończona',
+    CANCELLED: 'Anulowana',
+  };
+
+  const mapStatusToPolish = (status) => {
+    return statusMap[status] || status;
+  };
+
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case 'PENDING_PAYMENT':
+        return 'warning';
+      case 'DONE_PAYMENT':
+        return 'success';
+      case 'APPOINTMENT_CONFIRMED':
+        return 'info';
+      case 'COMPLETED':
+        return 'secondary';
+      case 'CANCELLED':
+        return 'danger';
+      default:
+        return 'light';
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
@@ -82,7 +112,7 @@ function MyAppointments() {
   const handlePayForAppointment = (appointment) => {
     setSelectedAppointment(appointment);
     setShowPayModal(true);
-  }
+  };
 
   const confirmDelete = () => {
     const api = new AppointmentControllerApi();
@@ -90,9 +120,9 @@ function MyAppointments() {
       if (error) {
         setError('Błąd podczas usuwania wizyty: ' + error.message);
       } else {
-        fetchAppointments(clientId)
+        fetchAppointments(clientId);
       }
-      setShowDeleteModal(false)
+      setShowDeleteModal(false);
     });
   };
 
@@ -102,9 +132,9 @@ function MyAppointments() {
       if (error) {
         setError('Błąd podczas opłacania wizyty: ' + error.message);
       } else {
-        fetchAppointments(clientId)
+        fetchAppointments(clientId);
       }
-      setShowPayModal(false)
+      setShowPayModal(false);
     });
   };
 
@@ -128,6 +158,7 @@ function MyAppointments() {
         setShowReviewModal(false);
         setReviewContent('');
         setRating(5);
+        fetchAppointments(clientId);
       }
     });
   };
@@ -171,18 +202,23 @@ function MyAppointments() {
                         {new Date(appointment.appointmentDate).toLocaleString()}
                       </td>
                       <td>{appointment.employee.name}</td>
-                      <td>{appointment.status}</td>
+                      <td>
+                        <Badge bg={getStatusVariant(appointment.status)}>
+                          {mapStatusToPolish(appointment.status)}
+                        </Badge>
+                      </td>
                       <td>
                         {(new Date(appointment.appointmentDate) > new Date() && appointment.status !== "CANCELLED") && 
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          className="me-2 mb-2 mb-md-0 text-white"
-                          onClick={() => handleDeleteAppointment(appointment)}
-                        >
-                          Anuluj
-                        </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            className="me-2 mb-2 mb-md-0 text-white"
+                            onClick={() => handleDeleteAppointment(appointment)}
+                          >
+                            Anuluj
+                          </Button>
                         }
+
                         {(new Date(appointment.appointmentDate) < new Date() && appointment.status === "COMPLETED") && (
                           <Button
                             variant="outline-light"
@@ -192,6 +228,7 @@ function MyAppointments() {
                             Dodaj Recenzję
                           </Button>
                         )}
+
                         {(new Date(appointment.appointmentDate) < new Date() && appointment.status === "PENDING_PAYMENT") && (
                           <Button
                             variant="outline-light"
