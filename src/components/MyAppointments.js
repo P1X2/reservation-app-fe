@@ -20,6 +20,7 @@ function MyAppointments() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPayModal, setShowPayModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [reviewContent, setReviewContent] = useState('');
@@ -78,19 +79,32 @@ function MyAppointments() {
     setShowDeleteModal(true);
   };
 
+  const handlePayForAppointment = (appointment) => {
+    setSelectedAppointment(appointment);
+    setShowPayModal(true);
+  }
+
   const confirmDelete = () => {
     const api = new AppointmentControllerApi();
-    api.deleteAppointment(selectedAppointment.appointmentId, (error) => {
+    api.updateAppointmentStatus(selectedAppointment.appointmentId, "CANCELLED", (error) => {
       if (error) {
         setError('Błąd podczas usuwania wizyty: ' + error.message);
       } else {
-        setAppointments(
-          appointments.filter(
-            (app) => app.appointmentId !== selectedAppointment.appointmentId
-          )
-        );
-        setShowDeleteModal(false);
+        fetchAppointments(clientId)
       }
+      setShowDeleteModal(false)
+    });
+  };
+
+  const confirmPayment = () => {
+    const api = new AppointmentControllerApi();
+    api.updateAppointmentStatus(selectedAppointment.appointmentId, "APPOINTMENT_CONFIRMED", (error) => {
+      if (error) {
+        setError('Błąd podczas opłacania wizyty: ' + error.message);
+      } else {
+        fetchAppointments(clientId)
+      }
+      setShowPayModal(false)
     });
   };
 
@@ -145,6 +159,7 @@ function MyAppointments() {
                     <th>Usługa</th>
                     <th>Data</th>
                     <th>Pracownik</th>
+                    <th>Status</th>
                     <th>Akcja</th>
                   </tr>
                 </thead>
@@ -156,7 +171,9 @@ function MyAppointments() {
                         {new Date(appointment.appointmentDate).toLocaleString()}
                       </td>
                       <td>{appointment.employee.name}</td>
+                      <td>{appointment.status}</td>
                       <td>
+                        {(new Date(appointment.appointmentDate) > new Date() && appointment.status !== "CANCELLED") && 
                         <Button
                           variant="outline-danger"
                           size="sm"
@@ -165,13 +182,23 @@ function MyAppointments() {
                         >
                           Anuluj
                         </Button>
-                        {new Date(appointment.appointmentDate) < new Date() && (
+                        }
+                        {(new Date(appointment.appointmentDate) < new Date() && appointment.status === "COMPLETED") && (
                           <Button
                             variant="outline-light"
                             size="sm"
                             onClick={() => handleAddReview(appointment)}
                           >
                             Dodaj Recenzję
+                          </Button>
+                        )}
+                        {(new Date(appointment.appointmentDate) < new Date() && appointment.status === "PENDING_PAYMENT") && (
+                          <Button
+                            variant="outline-light"
+                            size="sm"
+                            onClick={() => handlePayForAppointment(appointment)}
+                          >
+                            Opłać wizytę
                           </Button>
                         )}
                       </td>
@@ -186,6 +213,29 @@ function MyAppointments() {
           </div>
         </Col>
       </Row>
+
+      <Modal
+        show={showPayModal}
+        onHide={() => setShowPayModal(false)}
+        centered
+        backdrop="static"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Potwierdzenie opłacenia</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Czy na pewno chcesz opłacić wizytę na usługę:{' '}
+          <strong>{selectedAppointment?.service.name}</strong>?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowPayModal(false)}>
+            Zamknij
+          </Button>
+          <Button variant="danger" onClick={confirmPayment}>
+            Opłać wizytę
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <Modal
         show={showDeleteModal}

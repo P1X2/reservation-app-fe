@@ -258,7 +258,7 @@ export default class AppointmentControllerApi {
       let accepts = [];
       let returnType = null;
       return this.apiClient.callApi(
-        '/appointment/update-status/{appointmentId}', 'PUT',
+        '/appointment/update-status/{appointmentId}', 'PATCH',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

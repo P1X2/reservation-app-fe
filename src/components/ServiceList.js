@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   Container,
   Row,
@@ -13,6 +13,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import ServiceControllerApi from '../generated-api-client/src/api/ServiceControllerApi';
 import ReviewControllerApi from '../generated-api-client/src/api/ReviewControllerApi';
+import { AuthContext } from './AuthContext';
+
+
 
 function ServiceList() {
   const [services, setServices] = useState([]);
@@ -24,6 +27,20 @@ function ServiceList() {
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [errorReviews, setErrorReviews] = useState(null);
   const navigate = useNavigate();
+
+  const { token } = useContext(AuthContext);
+  let roles = [];
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      roles = decodedToken.roles || [];
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const isEmployee = roles.includes('EMPLOYEE');
 
   useEffect(() => {
     const api = new ServiceControllerApi();
@@ -53,7 +70,7 @@ function ServiceList() {
     const reviewApi = new ReviewControllerApi();
     reviewApi.getByService(
       service.serviceId,
-      { page: 0, pageSize: 10, sortBy: 'createdAt', sortDir: 'desc' },
+      { page: 0, pageSize: 10, sortBy: 'created_at', sortDir: 'desc' },
       (error, data) => {
         if (error) {
           setErrorReviews('Błąd podczas pobierania recenzji: ' + error.message);
@@ -64,6 +81,17 @@ function ServiceList() {
         }
       }
     );
+  };
+
+  const handleDeleteReview = (reviewId) => {
+    const reviewApi = new ReviewControllerApi();
+    reviewApi.delete1(reviewId, (error) => {
+      if (error) {
+        setErrorReviews('Błąd podczas usuwania recenzji: ' + error.message);
+      } else {
+        setReviews(reviews.filter((review) => review.reviewId !== reviewId));
+      }
+    });
   };
 
   return (
@@ -128,6 +156,7 @@ function ServiceList() {
         </Col>
       </Row>
 
+      {/* Modal z recenzjami */}
       <Modal
         show={showReviewModal}
         onHide={() => setShowReviewModal(false)}
@@ -148,9 +177,22 @@ function ServiceList() {
             <ListGroup variant="flush">
               {reviews.map((review) => (
                 <ListGroup.Item key={review.reviewId}>
-                  <strong>Ocena: {review.rating}/5</strong>
-                  <p>{review.reviewContent}</p>
-                  <small>{new Date(review.createdAt).toLocaleString()}</small>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>Ocena: {review.rating}/5</strong>
+                      <p>{review.reviewContent}</p>
+                      <small>{new Date(review.createdAt).toLocaleString()}</small>
+                    </div>
+                    {isEmployee && (
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => handleDeleteReview(review.reviewId)}
+                      >
+                        Usuń
+                      </Button>
+                    )}
+                  </div>
                 </ListGroup.Item>
               ))}
             </ListGroup>

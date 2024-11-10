@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import RegisterForm from '../login/RegisterForm';
 import LoginForm from '../login/LoginForm';
+import { AuthContext } from '../AuthContext';
 
 function HomePage() {
   const [showLogin, setShowLogin] = useState(false);
@@ -13,11 +14,11 @@ function HomePage() {
   const handleCloseRegister = () => setShowRegister(false);
   const handleShowRegister = () => setShowRegister(true);
 
-  const isLoggedIn = !!localStorage.getItem('jwtToken');
+  const { isAuthenticated, logout } = useContext(AuthContext);
 
   return (
     <div className="d-flex flex-column justify-content-center align-items-center">
-      {!isLoggedIn && (
+      {!isAuthenticated && (
         <>
           <div className="bg-dark p-4 rounded text-center d-flex flex-column align-items-center mt-5">
             <h1 className="mb-4 text-white">Dołącz już dziś</h1>
@@ -48,7 +49,7 @@ function HomePage() {
           </Modal>
         </>
       )}
-      {isLoggedIn && (
+      {isAuthenticated && (
         <div className="text-center mt-5">
           <h1 className="text-white">Witaj z powrotem!</h1>
           <p className="text-white">Skorzystaj z menu, aby poruszać się po aplikacji.</p>

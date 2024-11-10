@@ -52,7 +52,7 @@ function EmployeeAppointments() {
 
   const confirmCancel = () => {
     const api = new AppointmentControllerApi();
-    api.deleteAppointment(selectedAppointment.appointmentId, (error) => {
+    api.updateAppointmentStatus(selectedAppointment.appointmentId, "CANCELLED", (error) => {
       if (error) {
         setError('Błąd podczas odwoływania wizyty: ' + error.message);
       } else {
@@ -121,7 +121,7 @@ function EmployeeAppointments() {
                       <td>{appointment.employee.name}</td>
                       <td>{appointment.status}</td>
                       <td>
-                        {new Date(appointment.appointmentDate) > new Date() && appointment.status !== 'CANCELLED' && (
+                        {(new Date(appointment.appointmentDate) > new Date() && appointment.status !== "CANCELLED") && (
                           <Button
                             variant="outline-danger"
                             size="sm"

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import AuthControllerApi from '../../generated-api-client/src/api/AuthControllerApi';
-import ApiClient from '../../generated-api-client/src/ApiClient';
+import { AuthContext } from '../AuthContext';
 
 function LoginForm({ onClose }) {
+  const { login } = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -22,11 +23,9 @@ function LoginForm({ onClose }) {
           console.error('Login Error:', error);
         } else {
           const jwtToken = response.text;
-          console.log(response)
-
+          login(jwtToken);
           localStorage.setItem('jwtToken', jwtToken);
-          console.log(localStorage.getItem('jwtToken'))
-          navigate('/my-appointments');
+          navigate('/home');
         }
       });
     } catch (error) {
