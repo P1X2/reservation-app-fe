@@ -19,12 +19,13 @@ function LoginForm({ onClose }) {
       const loginUserCommand = { username, password };
       userApi.login(loginUserCommand, (error, data, response) => {
         if (error) {
-          setError('Login failed: ' + error.message);
-          console.error('Login Error:', error);
-        } else if (response.status === 401) {
-          setError('Twoje konto zostało zawieszone');
-        }
-         else {
+          if (response.status === 401) {
+            setError('Twoje konto zostało zawieszone');
+          } else {
+            setError('Login failed: ' + error.message);
+            console.error('Login Error:', error);
+          }
+        } else {
           const jwtToken = response.text;
           login(jwtToken);
           localStorage.setItem('jwtToken', jwtToken);
