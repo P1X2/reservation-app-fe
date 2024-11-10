@@ -8,6 +8,7 @@ import {
   Alert,
   Button,
   Modal,
+  Badge,
   ListGroup,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -54,6 +55,23 @@ function ServiceList() {
 
   const mapStatusToPolish = (status) => {
     return statusMap[status] || status;
+  };
+
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case 'PENDING_PAYMENT':
+        return 'warning';
+      case 'DONE_PAYMENT':
+        return 'success';
+      case 'APPOINTMENT_CONFIRMED':
+        return 'info';
+      case 'COMPLETED':
+        return 'secondary';
+      case 'CANCELLED':
+        return 'danger';
+      default:
+        return 'light';
+    }
   };
 
   useEffect(() => {
@@ -146,7 +164,6 @@ function ServiceList() {
                     <th>Opis</th>
                     <th>Czas trwania (min)</th>
                     <th>Cena (PLN)</th>
-                    <th>Status</th>
                     <th>Akcja</th>
                   </tr>
                 </thead>
@@ -157,7 +174,6 @@ function ServiceList() {
                       <td>{service.description}</td>
                       <td>{service.durationMinutes}</td>
                       <td>{service.price}</td>
-                      <td>{mapStatusToPolish(service.status)}</td>
                       <td>
                         {isClient && (
                           <Button
@@ -209,10 +225,15 @@ function ServiceList() {
             <ListGroup variant="flush">
               {reviews.map((review) => (
                 <ListGroup.Item key={review.reviewId}>
-                  <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex justify-content-between align-items-start">
                     <div>
-                      <strong>Ocena: {review.rating}/5</strong>
-                      <p>{review.reviewContent}</p>
+                      <div className="mb-1">
+                        <strong>Użytkownik: {review.appointment.client.username}</strong>
+                      </div>
+                      <div className="mb-2">
+                        <strong>Ocena: {review.rating}/5</strong>
+                      </div>
+                      <p className="mb-1">{review.reviewContent}</p>
                       <small>
                         {new Date(review.createdAt).toLocaleString()} -{' '}
                         {review.userName} {review.userSurname}
