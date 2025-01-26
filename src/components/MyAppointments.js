@@ -229,7 +229,7 @@ function MyAppointments() {
                           </Button>
                         )}
 
-                        {(new Date(appointment.appointmentDate) < new Date() && appointment.status === "PENDING_PAYMENT") && (
+                        {(new Date(appointment.appointmentDate) > new Date() && appointment.status === "PENDING_PAYMENT") && (
                           <Button
                             variant="outline-light"
                             size="sm"
