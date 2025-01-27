@@ -223,7 +223,7 @@ function ServiceList() {
                         <Button
                           variant="outline-warning"
                           size="sm"
-                          onClick={() => handleBanUser(review.userId)}
+                          onClick={() => handleBanUser(review.client.userId)}
                         >
                           Zbanuj Użytkownika
                         </Button>
