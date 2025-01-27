@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Row,
@@ -10,14 +10,18 @@ import {
   Spinner,
   Modal,
   Badge,
+  ListGroup,
 } from 'react-bootstrap';
+import UserControllerApi from '../generated-api-client/src/api/UserControllerApi';
 import AppointmentControllerApi from '../generated-api-client/src/api/AppointmentControllerApi';
 
 function EmployeeAppointments() {
-  const [clientId, setClientId] = useState('');
+  const [clients, setClients] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loadingClients, setLoadingClients] = useState(false);
+  const [loadingAppointments, setLoadingAppointments] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
@@ -50,29 +54,43 @@ function EmployeeAppointments() {
     }
   };
 
-  const handleSearch = () => {
-    if (!clientId) {
-      setError('Wprowadź ID klienta.');
-      return;
-    }
+  const fetchClients = () => {
+    setLoadingClients(true);
+    setError(null);
+    const userApi = new UserControllerApi();
+    userApi.getAllUsers((error, data) => {
+      if (error) {
+        setError('Błąd podczas pobierania listy klientów: ' + error.message);
+        setLoadingClients(false);
+      } else {
+        setClients(data);
+        setLoadingClients(false);
+      }
+    });
+  };
 
-    setLoading(true);
+  const fetchAppointments = (clientId) => {
+    setLoadingAppointments(true);
     setError(null);
     const api = new AppointmentControllerApi();
-
     api.getAppointmentsByUserId(
       clientId,
       { page: 0, pageSize: 10, sortBy: 'appointmentDate', sortDir: 'asc' },
       (error, data) => {
         if (error) {
           setError('Błąd podczas pobierania wizyt: ' + error.message);
-          setLoading(false);
+          setLoadingAppointments(false);
         } else {
           setAppointments(data.content);
-          setLoading(false);
+          setLoadingAppointments(false);
         }
       }
     );
+  };
+
+  const handleClientSelect = (client) => {
+    setSelectedClient(client);
+    fetchAppointments(client.id);
   };
 
   const handleCancelClick = (appointment) => {
@@ -99,6 +117,10 @@ function EmployeeAppointments() {
     });
   };
 
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
   return (
     <Container fluid className="min-vh-100 py-5">
       <Row className="justify-content-center">
@@ -107,74 +129,81 @@ function EmployeeAppointments() {
             className="p-5 rounded"
             style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'white' }}
           >
-            <h2 className="mb-4 text-center">Wizyty Klienta</h2>
-            <Form className="mb-4">
-              <Row className="align-items-end">
-                <Col md={8}>
-                  <Form.Group>
-                    <Form.Label htmlFor="clientId">ID Klienta:</Form.Label>
-                    <Form.Control
-                      type="text"
-                      id="clientId"
-                      value={clientId}
-                      onChange={(e) => setClientId(e.target.value)}
-                      placeholder="Wprowadź ID klienta"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={4}>
-                  <Button variant="primary" onClick={handleSearch} className="w-100">
-                    Szukaj
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
+            <h2 className="mb-4 text-center">Wizyty Klientów</h2>
             {error && <Alert variant="danger">{error}</Alert>}
-            {loading && (
+            {loadingClients && (
               <div className="text-center">
                 <Spinner animation="border" variant="light" />
               </div>
             )}
-            {!loading && appointments.length > 0 && (
-              <Table striped bordered hover responsive variant="dark">
-                <thead>
-                  <tr>
-                    <th>Usługa</th>
-                    <th>Data</th>
-                    <th>Pracownik</th>
-                    <th>Status</th> {/* Dodanie kolumny Status */}
-                    <th>Akcje</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.map((appointment) => (
-                    <tr key={appointment.appointmentId}>
-                      <td>{appointment.service.name}</td>
-                      <td>{new Date(appointment.appointmentDate).toLocaleString()}</td>
-                      <td>{appointment.employee.name} {appointment.employee.surname}</td>
-                      <td>
-                        <Badge bg={getStatusVariant(appointment.status)}>
-                          {mapStatusToPolish(appointment.status)}
-                        </Badge>
-                      </td>
-                      <td>
-                        {(new Date(appointment.appointmentDate) > new Date() && appointment.status !== "CANCELLED") && (
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => handleCancelClick(appointment)}
-                          >
-                            Anuluj
-                          </Button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
+            {!loadingClients && clients.length > 0 && (
+              <ListGroup>
+                {clients.map((client) => (
+                  <ListGroup.Item
+                    key={client.id}
+                    action
+                    onClick={() => handleClientSelect(client)}
+                  >
+                    {client.name} {client.surname}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
             )}
-            {!loading && appointments.length === 0 && !error && (
-              <p className="text-center">Brak wizyt dla podanego klienta.</p>
+            {!loadingClients && clients.length === 0 && (
+              <p className="text-center">Brak dostępnych klientów.</p>
+            )}
+            {selectedClient && (
+              <>
+                <h4 className="mt-4">
+                  Wizyty klienta: {selectedClient.name} {selectedClient.surname}
+                </h4>
+                {loadingAppointments && (
+                  <div className="text-center">
+                    <Spinner animation="border" variant="light" />
+                  </div>
+                )}
+                {!loadingAppointments && appointments.length > 0 && (
+                  <Table striped bordered hover responsive variant="dark" className="mt-3">
+                    <thead>
+                      <tr>
+                        <th>Usługa</th>
+                        <th>Data</th>
+                        <th>Pracownik</th>
+                        <th>Status</th>
+                        <th>Akcje</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {appointments.map((appointment) => (
+                        <tr key={appointment.appointmentId}>
+                          <td>{appointment.service.name}</td>
+                          <td>{new Date(appointment.appointmentDate).toLocaleString()}</td>
+                          <td>{appointment.employee.name} {appointment.employee.surname}</td>
+                          <td>
+                            <Badge bg={getStatusVariant(appointment.status)}>
+                              {mapStatusToPolish(appointment.status)}
+                            </Badge>
+                          </td>
+                          <td>
+                            {(new Date(appointment.appointmentDate) > new Date() && appointment.status !== "CANCELLED") && (
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => handleCancelClick(appointment)}
+                              >
+                                Anuluj
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                )}
+                {!loadingAppointments && appointments.length === 0 && !error && (
+                  <p className="text-center">Brak wizyt dla wybranego klienta.</p>
+                )}
+              </>
             )}
           </div>
         </Col>
