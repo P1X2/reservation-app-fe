@@ -38,7 +38,7 @@ function MainLayout() {
       }}
     >
       <Navbar bg="dark" variant="dark" expand="lg">
-        <Navbar.Brand as={Link} to="/home">Moja Aplikacja</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/home">Salon Piękności</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           {isAuthenticated ? (
