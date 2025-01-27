@@ -90,7 +90,7 @@ function EmployeeAppointments() {
 
   const handleClientSelect = (client) => {
     setSelectedClient(client);
-    fetchAppointments(client.id);
+    fetchAppointments(client.userId);
   };
 
   const handleCancelClick = (appointment) => {
